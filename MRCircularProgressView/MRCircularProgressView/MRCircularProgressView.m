@@ -59,8 +59,6 @@
     self.currentProgress = 0.0f;
     self.lastProgress = 0.0f;
     self.animated = YES;
-    self.progressColor = [UIColor blueColor];
-    self.wrapperColor = self.progressColor;
     self.duration = 0.5;
     self.progressArcWidth = 3.0f;
     self.wrapperArcWidth = 1.f;
@@ -79,7 +77,7 @@
         newRect;
     });
     UIBezierPath *outerCircle = [UIBezierPath bezierPathWithOvalInRect:newRect];
-    [self.wrapperColor setStroke];
+    [self.tintColor setStroke];
     outerCircle.lineWidth = self.wrapperArcWidth;
     [outerCircle stroke];
 }
@@ -88,24 +86,24 @@
 {
     // Offset
     CGFloat offset = - M_PI_2;
-    
+
     // EndAngle
     CGFloat endAngle =  self.currentProgress * 2 * M_PI + offset;
-    
+
     // Center
     CGRect rect = self.bounds;
     CGPoint center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 
     // Radius
     CGFloat radius = MIN(center.x, center.y) - self.progressArcWidth / 2;
-    
+
     // Inner arc
     UIBezierPath *arcPath = [UIBezierPath bezierPathWithArcCenter:center
                                                            radius:radius
                                                        startAngle:offset
                                                          endAngle:endAngle
                                                         clockwise:1];
-    
+
     return arcPath.CGPath;
 }
 
@@ -127,9 +125,9 @@
         _shapeLayer.speed=1.0f;
         [self.layer addSublayer:_shapeLayer];
     }
-    
+
     // This will allow the color to be change in the middle of the duration period
-    _shapeLayer.strokeColor = self.progressColor.CGColor;
+    _shapeLayer.strokeColor = self.tintColor.CGColor;
 
     return _shapeLayer;
 }
@@ -140,7 +138,7 @@
 {
     // Update path
     self.shapeLayer.path = [self progressPath];
-    
+
     // Animation
     if (self.currentProgress != self.lastProgress && self.animated) {
         // From value
@@ -154,7 +152,7 @@
         pathAnimation.toValue = @(1.0f);
         [self.shapeLayer addAnimation:pathAnimation forKey:@"strokeEnd"];
     }
-    
+
     // Update lastProgress
     self.lastProgress = self.currentProgress;
 }
@@ -168,7 +166,7 @@
     if (progress==0.0) {
         //means reset been tapped
         self.shapeLayer.speed=1;
-        
+
     }
     [self setNeedsLayout];
 }
@@ -183,14 +181,14 @@
 #pragma mark pause/resume
 -(void)pause
 {
-    
+
 
      if (self.currentProgress !=0) {
         CFTimeInterval pausedTime = [self.shapeLayer convertTime:CACurrentMediaTime() fromLayer:nil];
         self.shapeLayer.speed = 0.0;
         self.shapeLayer.timeOffset = pausedTime;
-     } 
-    
+     }
+
 }
 
 -(void)resume
@@ -203,7 +201,7 @@
         CFTimeInterval timeSincePause = [self.shapeLayer convertTime:CACurrentMediaTime() fromLayer:nil] - pausedTime;
         self.shapeLayer.beginTime = timeSincePause;
     }
-    
+
 }
 
 @end
